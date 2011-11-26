@@ -1,7 +1,7 @@
 require 'optparse'
 require 'aws/s3'
 
-working_directory_path = Dir.pwd + "/"
+working_directory_path = "/tmp/"
 
 options = {}
 OptionParser.new do |opts|
@@ -31,14 +31,16 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+Dir.chdir(working_directory_path)
+
 # Check if extracted DB folder already exists
-if File::directory? (working_directory_path + options[:db])
+if File::directory? (options[:db])
 
   puts "Found existing extracted DB"
   puts ""
   puts "    Note: If you wanted to restore from a new download,"
-  puts "          delete the meeteor_production folder containing "
-  puts "          the extracted DB."
+  puts "          delete the #{working_directory_path}meeteor_production"
+  puts "          folder containing the extracted DB."
   
 else
   connection = AWS::S3::Base.establish_connection!(
@@ -49,6 +51,7 @@ else
   if connection
     puts "Successfully connected to S3..."
   else
+    puts "Unable to connect to S3. Invalid key/secret."
     exit
   end
 
@@ -62,11 +65,9 @@ else
   mongo_backup_bucket = AWS::S3::Bucket.find(options[:bucket])
 
   puts "Found #{mongo_backup_bucket.objects.count} backups..."
-  puts "Selecting latest backups..."
-
   latest_backup_object = mongo_backup_bucket.objects.last
 
-  puts "Downloading backup..."
+  puts "Downloading latest backup..."
   aFile = File.new("mongo_backup.tgz", "w+")
   aFile.syswrite(latest_backup_object.value)
 
@@ -76,19 +77,16 @@ else
 
   puts ""
   puts "Removing system.indexes & system.users"
-  Dir.chdir(working_directory_path + options[:db])
-  File.delete("system.indexes.bson")
-  File.delete("system.users.bson")
+  File.delete("#{options[:db]}/system.indexes.bson")
+  File.delete("#{options[:db]}/system.users.bson")
 end
 
 puts ""
 puts "Dumping existing db with rake..."
-Dir.chdir(options[:app_path])
-system "rake db:drop"
+system "cd #{options[:app_path]} && bundle exec rake db:drop"
 
 puts ""
 puts "Restoring backup..."
-Dir.chdir(working_directory_path + options[:db])
-system "mongorestore -d #{options[:mongo]} ."
+system "mongorestore -d #{options[:mongo]} #{options[:db]}"
 
 puts "Done!"
