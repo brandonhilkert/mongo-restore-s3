@@ -18,4 +18,4 @@ Install
 Usage
 -----
 
-`ruby mongo-restore-s3.rb -k [S3_key] -s [S3_secret] -b Mongo.Backup -d awesome_app_production -m awesome_app_development -p /Users/code/awesome_app/`
+`ruby mongo-restore-s3.rb -k [S3_key] -s [S3_secret] -b Mongo.Backup -d awesome_app_production -m awesome_app_development`

@@ -16,11 +16,7 @@ OptionParser.new do |opts|
   
   opts.on("-s", "--secret SECRET", "Amazon S3 Secret") do |secret|
     options[:s3_secret] = secret
-  end
-  
-  opts.on("-p", "--path PATH", "Application path") do |path|
-    options[:app_path] = path
-  end  
+  end 
   
   opts.on("-d", "--database NAME", "Name of extracted DB") do |db|
     options[:db] = db
@@ -76,17 +72,12 @@ else
   system "tar xzvf mongo_backup.tgz"
 
   puts ""
-  puts "Removing system.indexes & system.users"
+  puts "Removing system.indexes"
   File.delete("#{options[:db]}/system.indexes.bson")
-  File.delete("#{options[:db]}/system.users.bson")
 end
 
 puts ""
-puts "Dumping existing db with rake..."
-system "cd #{options[:app_path]} && bundle exec rake db:drop"
-
-puts ""
 puts "Restoring backup..."
-system "mongorestore -d #{options[:mongo]} #{options[:db]}"
+system "mongorestore --drop d #{options[:mongo]} #{options[:db]}"
 
 puts "Done!"
