@@ -24,19 +24,24 @@ OptionParser.new do |opts|
   
   opts.on("-m", "--mongo NAME", "Name of Mongo DB to restore to") do |db|
     options[:mongo] = db
+  end  
+  
+  options[:force] = false
+  opts.on("-f", "--force", "Force overwriting of previously downloaded backup") do |f|
+    options[:force] = true
   end
 end.parse!
 
 Dir.chdir(working_directory_path)
 
-# Check if extracted DB folder already exists
-if File::directory? (options[:db])
+# Check if extracted DB folder already exists and
+# the user doesn't want to overwrite
+if File::directory?(options[:db]) && !options[:force]
 
   puts "Found existing extracted DB"
   puts ""
   puts "    Note: If you wanted to restore from a new download,"
-  puts "          delete the #{working_directory_path}meeteor_production"
-  puts "          folder containing the extracted DB."
+  puts "          use the --force flag to overwrite the existing copy."
   
 else
   connection = AWS::S3::Base.establish_connection!(
