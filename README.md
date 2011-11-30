@@ -19,3 +19,7 @@ Usage
 -----
 
 `ruby mongo-restore-s3.rb -k [S3_key] -s [S3_secret] -b Mongo.Backup -d awesome_app_production -m awesome_app_development`
+
+Because databases are sometimes large, and downloading from S3 could potentially take awhile, the script will by default use a copy that has already been download. To forcefully overwrite this behavior and download a new copy every time the script is run use the [-f] flag, like:
+
+`ruby mongo-restore-s3.rb -k [S3_key] -s [S3_secret] -b Mongo.Backup -d awesome_app_production -m awesome_app_development -f`
