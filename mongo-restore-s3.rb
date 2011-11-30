@@ -78,6 +78,6 @@ end
 
 puts ""
 puts "Restoring backup..."
-system "mongorestore --drop d #{options[:mongo]} #{options[:db]}"
+system "mongorestore --drop -d #{options[:mongo]} #{options[:db]}"
 
 puts "Done!"
