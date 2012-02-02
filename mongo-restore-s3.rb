@@ -9,7 +9,12 @@ OptionParser.new do |opts|
 
   opts.on("-b", "--bucket BUCKET", "Amazon S3 Bucket name") do |bucket|
     options[:bucket] = bucket
-  end  
+  end
+
+  opts.on("-n", "--name NAME", "Object prefix") do |name|
+    options[:object_prefix] = name
+  end 
+    
   opts.on("-k", "--key KEY", "Amazon S3 Key") do |key|
     options[:s3_key] = key
   end  
@@ -62,13 +67,12 @@ else
   puts AWS::S3::Service.buckets.map(&:name)
 
   puts ""
-  puts "Selecting Mongo Backup Bucket..."
+  puts "Selecting bucket...#{options[:bucket]}"
   mongo_backup_bucket = AWS::S3::Bucket.find(options[:bucket])
 
-  puts "Found #{mongo_backup_bucket.objects.count} backups..."
-  latest_backup_object = mongo_backup_bucket.objects.last
+  latest_backup_object = options[:object_prefix] ? mongo_backup_bucket.objects(:prefix => options[:object_prefix]).last : mongo_backup_bucket.objects.last
 
-  puts "Downloading latest backup..."
+  puts "Downloading latest backup...#{latest_backup_object.key}"
   aFile = File.new("mongo_backup.tgz", "w+")
   aFile.syswrite(latest_backup_object.value)
 
