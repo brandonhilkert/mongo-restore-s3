@@ -25,11 +25,7 @@ OptionParser.new do |opts|
   
   opts.on("-d", "--database NAME", "Name of extracted DB") do |db|
     options[:db] = db
-  end  
-  
-  opts.on("-m", "--mongo NAME", "Name of Mongo DB to restore to") do |db|
-    options[:mongo] = db
-  end  
+  end 
   
   options[:force] = false
   opts.on("-f", "--force", "Force overwriting of previously downloaded backup") do |f|
@@ -70,7 +66,7 @@ else
   puts "Selecting bucket...#{options[:bucket]}"
   mongo_backup_bucket = AWS::S3::Bucket.find(options[:bucket])
 
-  latest_backup_object = options[:object_prefix] ? mongo_backup_bucket.objects(:prefix => options[:object_prefix]).last : mongo_backup_bucket.objects.last
+  latest_backup_object = mongo_backup_bucket.objects.last
 
   puts "Downloading latest backup...#{latest_backup_object.key}"
   aFile = File.new("mongo_backup.tgz", "w+")

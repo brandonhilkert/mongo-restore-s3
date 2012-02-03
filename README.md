@@ -15,6 +15,19 @@ Install
     $ git clone git@github.com:brandonhilkert/mongo-restore-s3.git
 
 
+Options
+---
+
+````Bash
+Usage: mongo-restore-s3.rb [options]
+    -b, --bucket BUCKET              Amazon S3 Bucket name
+    -n, --name NAME                  Object prefix
+    -k, --key KEY                    Amazon S3 Key
+    -s, --secret SECRET              Amazon S3 Secret
+    -d, --database NAME              Name of extracted DB
+    -f, --force                      Force overwriting of previously downloaded backup
+````
+
 Usage
 -----
 
