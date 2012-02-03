@@ -10,10 +10,6 @@ OptionParser.new do |opts|
   opts.on("-b", "--bucket BUCKET", "Amazon S3 Bucket name") do |bucket|
     options[:bucket] = bucket
   end
-
-  opts.on("-n", "--name NAME", "Object prefix") do |name|
-    options[:object_prefix] = name
-  end 
     
   opts.on("-k", "--key KEY", "Amazon S3 Key") do |key|
     options[:s3_key] = key
@@ -25,7 +21,11 @@ OptionParser.new do |opts|
   
   opts.on("-d", "--database NAME", "Name of extracted DB") do |db|
     options[:db] = db
-  end 
+  end  
+  
+  opts.on("-m", "--mongo NAME", "Name of Mongo DB to restore to") do |db|
+    options[:mongo] = db
+  end  
   
   options[:force] = false
   opts.on("-f", "--force", "Force overwriting of previously downloaded backup") do |f|
